@@ -1,41 +1,30 @@
-
-param location string = 'eastus'
-resource ubuntuVM 'Microsoft.Compute/virtualMachines@2020-12-01' = {
+resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-03-01' = {
   name: 'name'
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
-    hardwareProfile: {
-      vmSize: 'Standard_A2_v2'
-    }
-    osProfile: {
-      computerName: 'computerName'
-      adminUsername: 'adminUsername'
-      adminPassword: 'adminPassword'
-    }
-    storageProfile: {
-      imageReference: {
-        publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '16.04-LTS'
-        version: 'latest'
+    kubernetesVersion: '1.19.7'
+    dnsPrefix: 'dnsprefix'
+    enableRBAC: true
+    agentPoolProfiles: [
+      {
+        name: 'agentpool'
+        count: 3
+        vmSize: 'Standard_DS2_v2'
+        osType: 'Linux'
+        mode: 'System'
       }
-      osDisk: {
-        name: 'name'
-        caching: 'ReadWrite'
-        createOption: 'FromImage'
-      }
-    }
-    networkProfile: {
-      networkInterfaces: [
-        {
-          id: 'id'
-        }
-      ]
-    }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-        storageUri: 'storageUri'
+    ]
+    linuxProfile: {
+      adminUsername: 'adminUserName'
+      ssh: {
+        publicKeys: [
+          {
+            keyData: 'REQUIRED'
+          }
+        ]
       }
     }
   }
